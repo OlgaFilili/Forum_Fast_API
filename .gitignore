@@ -1,0 +1,8 @@
+venv/
+logs/
+unsortded/
+.env
+.idea/
+__pycache__/
+*.pyc
+*.bak
