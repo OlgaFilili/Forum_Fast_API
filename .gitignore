@@ -1,6 +1,6 @@
 venv/
 logs/
-unsortded/
+unsorted/
 .env
 .idea/
 __pycache__/
