@@ -7,4 +7,5 @@ class UserCreate(BaseModel):
 
 class UserResponse(BaseModel):
     user_id: int
+    username: str
     registered_at: datetime

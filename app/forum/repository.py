@@ -18,3 +18,8 @@ async def insert_user(session: AsyncSession, user_data: UserCreate) -> UserRespo
     await session.commit()
     await session.refresh(new_user)
     return UserResponse(user_id=new_user.id, registered_at=new_user.registered_at)
+
+async def select_user_by_username(session: AsyncSession, username: str)-> User | None:
+    result = await session.execute(select(User).where(User.username == username))
+    user = result.scalar_one_or_none()
+    return user

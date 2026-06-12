@@ -8,3 +8,5 @@ CONNECTION_STRING = (
     f"{os.getenv('DB_PASSWORD')}@127.0.0.1:5432/"
     f"{os.getenv('DB_NAME')}"
 )
+
+SECRET_KEY = os.getenv('SECRET_KEY')
