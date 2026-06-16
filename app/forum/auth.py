@@ -1,13 +1,14 @@
 import jwt
 from datetime import datetime, timedelta, timezone
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.config import SECRET_KEY
 from database.db import get_session
+from database.models import User
 from app.forum.schemas import UserCreate, UserResponse
-from app.forum.repository import insert_user, select_user_by_username
+from app.forum.repository import insert_user, select_user_by_username, select_user_by_id
 
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -19,6 +20,11 @@ def hash_password(password: str) -> str:
 
 def verify_password(password: str, hashed: str) -> bool:
     return pwd_context.verify(password, hashed)
+
+async def get_current_user(request: Request, async_session: AsyncSession = Depends(get_session)) -> User | None:
+    token = jwt.decode(request.cookies.get("token"), SECRET_KEY, algorithms=["HS256"])
+    user = await select_user_by_id(async_session, token["user_id"])
+    return user
 
 
 @router.post("/users", response_model=UserResponse)

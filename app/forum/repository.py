@@ -1,8 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.models import User
-from app.forum.schemas import UserCreate, UserResponse
+from database.models import User, Post
+from app.forum.schemas import UserCreate, UserResponse, PostsUserResponse
 
 
 async def insert_user(session: AsyncSession, user_data: UserCreate) -> UserResponse | None:
@@ -24,3 +24,15 @@ async def select_user_by_username(session: AsyncSession, username: str) -> User 
     result = await session.execute(select(User).where(User.username == username))
     user = result.scalar_one_or_none()
     return user
+
+
+async def select_user_by_id(session: AsyncSession, id: int) -> User | None:
+    result = await session.execute(select(User).where(User.id == id))
+    user = result.scalar_one_or_none()
+    return user
+
+
+async def get_posts_by_user_id(session: AsyncSession, user_id: int) -> list[PostsUserResponse]:
+    result = await session.execute(select(Post).where(Post.author_id == user_id))
+    posts = result.scalars().all()
+    return [PostsUserResponse(post_id=post.id, text=post.text, created_at=post.created_at) for post in posts]
